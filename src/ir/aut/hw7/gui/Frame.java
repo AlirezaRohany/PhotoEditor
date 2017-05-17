@@ -2,6 +2,7 @@ package ir.aut.hw7.gui;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,7 @@ import java.io.IOException;
 
 public class Frame extends JFrame {
     private BufferedImage image;
+    private ImagePanel imagePanel;
 
     public Frame(int defaultCloseOperation, int width, int height) throws IOException {
         super("Photo Editor");
@@ -33,16 +35,18 @@ public class Frame extends JFrame {
         JMenuItem item6 = new JMenuItem("Add Sticker", KeyEvent.VK_S);
         menu1.add(item1);
         menu1.add(item2);
-        item2.addActionListener(new myActionListener());
+        item2.addActionListener(new myActionListener2());
         menu1.add(item3);
+        item3.addActionListener(new myActionListener3());
         menu1.add(item4);
+        item4.addActionListener(new myActionListener4());
         menu2.add(item5);
         menu2.add(item6);
         this.setJMenuBar(menuBar);
         this.setVisible(true);
     }
 
-    public class myActionListener implements ActionListener {
+    public class myActionListener2 implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             JFileChooser jFileChooser = new JFileChooser();
             int returnValue = jFileChooser.showOpenDialog(null);
@@ -50,7 +54,7 @@ public class Frame extends JFrame {
                 File file = jFileChooser.getSelectedFile();
                 try {
                     image = ImageIO.read(file);
-                    ImagePanel imagePanel = new ImagePanel(image);
+                    imagePanel = new ImagePanel(image);
                     Frame.this.add(imagePanel);
                     Frame.this.setVisible(true);
                     Frame.this.revalidate();
@@ -58,6 +62,34 @@ public class Frame extends JFrame {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    public class myActionListener3 implements ActionListener {
+        public void actionPerformed(ActionEvent ae) {
+            imagePanel.setVisible(false);
+            image = null;
+        }
+    }
+
+    public class myActionListener4 implements ActionListener {
+        public void actionPerformed(ActionEvent ae) {
+            JFileChooser jFileChooser = new JFileChooser();
+            FileNameExtensionFilter pFilter = new FileNameExtensionFilter("png", "png");
+            jFileChooser.setFileFilter(pFilter);
+            int status = jFileChooser.showSaveDialog(Frame.this);
+            if (status == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = jFileChooser.getSelectedFile();
+                String fileName = null;
+                try {
+                    fileName = selectedFile.getCanonicalPath();
+                    selectedFile = new File(fileName + ".png");
+                    ImageIO.write(image, "png", selectedFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
     }

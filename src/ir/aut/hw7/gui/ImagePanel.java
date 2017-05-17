@@ -8,8 +8,9 @@ public class ImagePanel extends JPanel{
 
     private BufferedImage image;
 
-    public ImagePanel(BufferedImage img) {
+    ImagePanel(BufferedImage img) {
         image = img;
+        setPreferredSize(new Dimension(650,1000));
     }
 
     protected void paintComponent(Graphics g) {
