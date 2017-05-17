@@ -4,13 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class ImagePanel extends JPanel{
+public class ImagePanel extends JPanel {
 
     private BufferedImage image;
 
     ImagePanel(BufferedImage img) {
         image = img;
-        setPreferredSize(new Dimension(650,1000));
+        setPreferredSize(new Dimension(650, 800));
     }
 
     protected void paintComponent(Graphics g) {

@@ -34,6 +34,7 @@ public class Frame extends JFrame {
         JMenuItem item5 = new JMenuItem("Add Text", KeyEvent.VK_T);
         JMenuItem item6 = new JMenuItem("Add Sticker", KeyEvent.VK_S);
         menu1.add(item1);
+        item1.addActionListener(new myActionListener1());
         menu1.add(item2);
         item2.addActionListener(new myActionListener2());
         menu1.add(item3);
@@ -44,6 +45,20 @@ public class Frame extends JFrame {
         menu2.add(item6);
         this.setJMenuBar(menuBar);
         this.setVisible(true);
+    }
+
+    public class myActionListener1 implements ActionListener {
+        public void actionPerformed(ActionEvent ae) {
+            image = new BufferedImage(650, 800, BufferedImage.TYPE_INT_RGB);
+            Graphics g = image.getGraphics();
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, 650, 800);
+            imagePanel = new ImagePanel(image);
+            Frame.this.add(imagePanel);
+            Frame.this.setVisible(true);
+            Frame.this.revalidate();
+            Frame.this.repaint();
+        }
     }
 
     public class myActionListener2 implements ActionListener {
@@ -81,7 +96,7 @@ public class Frame extends JFrame {
             int status = jFileChooser.showSaveDialog(Frame.this);
             if (status == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = jFileChooser.getSelectedFile();
-                String fileName = null;
+                String fileName;
                 try {
                     fileName = selectedFile.getCanonicalPath();
                     selectedFile = new File(fileName + ".png");
