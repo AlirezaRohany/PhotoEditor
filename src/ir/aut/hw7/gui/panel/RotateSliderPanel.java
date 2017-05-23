@@ -1,12 +1,12 @@
-package ir.aut.hw7.gui;
+package ir.aut.hw7.gui.panel;
 
 import javax.swing.*;
 import java.awt.*;
 
-class RotateSliderPanel extends JPanel {
-    JSlider slider;
+public class RotateSliderPanel extends JPanel {
+    public JSlider slider;
 
-    RotateSliderPanel() {
+    public RotateSliderPanel() {
         setPreferredSize(new Dimension(300, 50));
         slider = new JSlider(JSlider.HORIZONTAL, 0, 360, 0);
         slider.setMinorTickSpacing(2);

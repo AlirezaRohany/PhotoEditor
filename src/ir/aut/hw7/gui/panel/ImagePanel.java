@@ -1,20 +1,20 @@
-package ir.aut.hw7.gui;
+package ir.aut.hw7.gui.panel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ImagePanel extends JPanel {
-    double degree;
+    private double degree;
     private BufferedImage image;
 
-    ImagePanel(BufferedImage img) {
+    public ImagePanel(BufferedImage img) {
         image = img;
         setPreferredSize(new Dimension(650, 800));
         this.setLayout(null);
     }
 
-    protected void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) {
         Graphics2D graphics = (Graphics2D) g;
         int x = this.getWidth() / 2;
         int y = this.getHeight() / 2;
@@ -23,4 +23,7 @@ public class ImagePanel extends JPanel {
         g.drawImage(image, 0, 0, this);
     }
 
+    public void setDegree(double degree) {
+        this.degree = degree;
+    }
 }

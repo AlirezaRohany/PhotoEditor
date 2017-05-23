@@ -1,6 +1,6 @@
 package ir.aut.hw7;
 
-import ir.aut.hw7.gui.Frame;
+import ir.aut.hw7.gui.frame.Frame;
 
 import javax.swing.*;
 import java.io.IOException;

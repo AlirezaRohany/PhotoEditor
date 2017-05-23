@@ -1,9 +1,10 @@
-package ir.aut.hw7.gui;
+package ir.aut.hw7.gui.frame;
+
+import ir.aut.hw7.gui.panel.ImagePanel;
+import ir.aut.hw7.gui.panel.RotateSliderPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
@@ -64,20 +65,22 @@ public class Frame extends JFrame {
             g.fillRect(0, 0, 650, 800);
             imagePanel = new ImagePanel(image);
             rotateSliderPanel = new RotateSliderPanel();
-            rotateSliderPanel.slider.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent e) {
-                    imagePanel.degree = rotateSliderPanel.slider.getValue();
-                    imagePanel.repaint();
-                    Frame.this.revalidate();
-                    Frame.this.repaint();
-                }
-            });
+            sliderAct();
             Frame.this.add(rotateSliderPanel);
             Frame.this.add(imagePanel);
             Frame.this.setVisible(true);
             Frame.this.revalidate();
             Frame.this.repaint();
         }
+    }
+
+    private void sliderAct() {
+        rotateSliderPanel.slider.addChangeListener(e -> {
+            imagePanel.setDegree(rotateSliderPanel.slider.getValue());
+            imagePanel.repaint();
+            Frame.this.revalidate();
+            Frame.this.repaint();
+        });
     }
 
     private class myActionListener2 implements ActionListener {
@@ -94,14 +97,7 @@ public class Frame extends JFrame {
                     image = ImageIO.read(file);
                     imagePanel = new ImagePanel(image);
                     rotateSliderPanel = new RotateSliderPanel();
-                    rotateSliderPanel.slider.addChangeListener(new ChangeListener() {
-                        public void stateChanged(ChangeEvent e) {
-                            imagePanel.degree = rotateSliderPanel.slider.getValue();
-                            imagePanel.repaint();
-                            Frame.this.revalidate();
-                            Frame.this.repaint();
-                        }
-                    });
+                    sliderAct();
                     Frame.this.add(rotateSliderPanel);
                     Frame.this.add(imagePanel);
                     Frame.this.setVisible(true);
@@ -150,17 +146,16 @@ public class Frame extends JFrame {
 
     private class myActionListener5 implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
+            if (textField != null) return;
             textField = new JTextField("Enter text here");
             textField.setPreferredSize(new Dimension(100, 25));
-            textField.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    String str = "";
-                    if (e.getSource() == textField) {
-                        str = String.format("%s", e.getActionCommand());
-                        myText = str;
-                        JOptionPane.showMessageDialog(null, "This text is ready to use: " + myText);
-                        printText();
-                    }
+            textField.addActionListener(e -> {
+                String str;
+                if (e.getSource() == textField) {
+                    str = String.format("%s", e.getActionCommand());
+                    myText = str;
+                    JOptionPane.showMessageDialog(null, "This text is ready to use: " + myText);
+                    printText();
                 }
             });
             Frame.this.add(textField);
