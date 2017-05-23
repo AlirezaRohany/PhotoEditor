@@ -6,9 +6,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +15,9 @@ public class Frame extends JFrame {
     private BufferedImage image;
     private ImagePanel imagePanel;
     private String myText;
-    private SliderPanel sliderPanel;
+    private RotateSliderPanel rotateSliderPanel;
+    private JTextField textField;
+    private JLabel label;
 
     public Frame(int defaultCloseOperation, int width, int height) throws IOException {
         super("Photo Editor");
@@ -54,19 +54,25 @@ public class Frame extends JFrame {
 
     private class myActionListener1 implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
+            if (imagePanel != null) {
+                JOptionPane.showMessageDialog(null, "Please first close the current image!");
+                return;
+            }
             image = new BufferedImage(650, 800, BufferedImage.TYPE_INT_RGB);
             Graphics g = image.getGraphics();
-            g.setColor(Color.cyan);
+            g.setColor(Color.WHITE);
             g.fillRect(0, 0, 650, 800);
             imagePanel = new ImagePanel(image);
-            sliderPanel=new SliderPanel();
-            sliderPanel.slider.addChangeListener(new ChangeListener() {
+            rotateSliderPanel = new RotateSliderPanel();
+            rotateSliderPanel.slider.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
-                    imagePanel.degree=sliderPanel.slider.getValue();
+                    imagePanel.degree = rotateSliderPanel.slider.getValue();
                     imagePanel.repaint();
+                    Frame.this.revalidate();
+                    Frame.this.repaint();
                 }
             });
-            Frame.this.add(sliderPanel);
+            Frame.this.add(rotateSliderPanel);
             Frame.this.add(imagePanel);
             Frame.this.setVisible(true);
             Frame.this.revalidate();
@@ -76,6 +82,10 @@ public class Frame extends JFrame {
 
     private class myActionListener2 implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
+            if (imagePanel != null) {
+                JOptionPane.showMessageDialog(null, "Please first close the current image!");
+                return;
+            }
             JFileChooser jFileChooser = new JFileChooser();
             int returnValue = jFileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -83,14 +93,16 @@ public class Frame extends JFrame {
                 try {
                     image = ImageIO.read(file);
                     imagePanel = new ImagePanel(image);
-                    sliderPanel=new SliderPanel();
-                    sliderPanel.slider.addChangeListener(new ChangeListener() {
+                    rotateSliderPanel = new RotateSliderPanel();
+                    rotateSliderPanel.slider.addChangeListener(new ChangeListener() {
                         public void stateChanged(ChangeEvent e) {
-                            imagePanel.degree=sliderPanel.slider.getValue();
+                            imagePanel.degree = rotateSliderPanel.slider.getValue();
                             imagePanel.repaint();
+                            Frame.this.revalidate();
+                            Frame.this.repaint();
                         }
                     });
-                    Frame.this.add(sliderPanel);
+                    Frame.this.add(rotateSliderPanel);
                     Frame.this.add(imagePanel);
                     Frame.this.setVisible(true);
                     Frame.this.revalidate();
@@ -105,6 +117,11 @@ public class Frame extends JFrame {
     private class myActionListener3 implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             imagePanel.setVisible(false);
+            rotateSliderPanel.setVisible(false);
+            if (textField != null) textField.setVisible(false);
+            textField = null;
+            rotateSliderPanel = null;
+            imagePanel = null;
             image = null;
         }
     }
@@ -121,7 +138,9 @@ public class Frame extends JFrame {
                 try {
                     fileName = selectedFile.getCanonicalPath();
                     selectedFile = new File(fileName + ".png");
-                    ImageIO.write(image, "png", selectedFile);
+                    BufferedImage img = new BufferedImage(imagePanel.getWidth(), imagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+                    imagePanel.paint(img.getGraphics());
+                    ImageIO.write(img, "png", selectedFile);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -131,7 +150,7 @@ public class Frame extends JFrame {
 
     private class myActionListener5 implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
-            JTextField textField = new JTextField("Enter text here");
+            textField = new JTextField("Enter text here");
             textField.setPreferredSize(new Dimension(100, 25));
             textField.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -153,8 +172,15 @@ public class Frame extends JFrame {
 
     private void printText() {
         if (myText != null && imagePanel != null) {
-            JLabel label = new JLabel(myText);
-            label.setBounds(10, 10, 100, 100);
+            label = new JLabel(myText);
+            label.setBounds(250, 100, 100, 100);
+            label.addMouseMotionListener(new MouseAdapter() {
+                public void mouseDragged(MouseEvent me) {
+                    label.setLocation(me.getX(), me.getY());
+                    label.repaint();
+                    Frame.this.repaint();
+                }
+            });
             imagePanel.add(label);
             this.setVisible(true);
             this.repaint();
