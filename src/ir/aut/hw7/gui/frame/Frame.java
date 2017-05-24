@@ -12,6 +12,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 
@@ -21,7 +23,9 @@ public class Frame extends JFrame {
     private String myText;
     private RotateSliderPanel rotateSliderPanel;
     private JTextField textField;
-    private ColorSliderPanel redSlider,blueSlider,greenSlider;
+    private ColorSliderPanel redSlider, blueSlider, greenSlider;
+    private JButton resetButton;
+    private BufferedImage backupImage;
 
     public Frame(int defaultCloseOperation, int width, int height) throws IOException {
         super("Photo Editor");
@@ -66,6 +70,10 @@ public class Frame extends JFrame {
             Graphics g = image.getGraphics();
             g.setColor(Color.WHITE);
             g.fillRect(0, 0, 650, 800);
+            ColorModel cm = image.getColorModel();
+            boolean isAlphaPreMultiplied = cm.isAlphaPremultiplied();
+            WritableRaster raster = image.copyData(null);
+            backupImage = new BufferedImage(cm, raster, isAlphaPreMultiplied, null);
             imagePanel = new ImagePanel(image);
             rotateSliderPanel = new RotateSliderPanel();
             loadingPhotoActs();
@@ -78,12 +86,103 @@ public class Frame extends JFrame {
     }
 
     private void loadingPhotoActs() {
+        resetButton = new JButton("reset the photo to default");
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                imagePanel.setVisible(false);
+                image = backupImage;
+                imagePanel = new ImagePanel(image);
+                imagePanel.setVisible(true);
+                imagePanel.repaint();
+                Frame.this.add(imagePanel);
+                resetButton.setVisible(false);
+            }
+        });
+        Frame.this.add(resetButton);
         rotateSliderPanel.slider.addChangeListener(e -> {
             imagePanel.setDegree(rotateSliderPanel.slider.getValue());
             imagePanel.repaint();
             Frame.this.revalidate();
             Frame.this.repaint();
         });
+        redSlider = new ColorSliderPanel("Red value");
+        redSlider.slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                for (int i = 0; i < image.getWidth(); i++) {
+                    for (int j = 0; j < image.getHeight(); j++) {
+                        int p = image.getRGB(i, j);
+                        int alpha = (p >> 24) & 0xff;
+                        int green = (p >> 8) & 0xff;
+                        int blue = (p) & 0xff;
+                        int newPixel = 0;
+                        newPixel += alpha;
+                        newPixel = newPixel << 8;
+                        newPixel += redSlider.slider.getValue();
+                        newPixel = newPixel << 8;
+                        newPixel += green;
+                        newPixel = newPixel << 8;
+                        newPixel += blue;
+                        image.setRGB(i, j, newPixel);
+                        imagePanel.repaint();
+                        imagePanel.revalidate();
+                        Frame.this.repaint();
+                    }
+                }
+            }
+        });
+        greenSlider = new ColorSliderPanel("Green value");
+        greenSlider.slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                for (int i = 0; i < image.getWidth(); i++) {
+                    for (int j = 0; j < image.getHeight(); j++) {
+                        int p = image.getRGB(i, j);
+                        int alpha = (p >> 24) & 0xff;
+                        int red = (p >> 16) & 0xff;
+                        int blue = (p) & 0xff;
+                        int newPixel = 0;
+                        newPixel += alpha;
+                        newPixel = newPixel << 8;
+                        newPixel += red;
+                        newPixel = newPixel << 8;
+                        newPixel += greenSlider.slider.getValue();
+                        newPixel = newPixel << 8;
+                        newPixel += blue;
+                        image.setRGB(i, j, newPixel);
+                        imagePanel.repaint();
+                        imagePanel.revalidate();
+                        Frame.this.repaint();
+                    }
+                }
+            }
+        });
+        blueSlider = new ColorSliderPanel("Blue value");
+        blueSlider.slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                for (int i = 0; i < image.getWidth(); i++) {
+                    for (int j = 0; j < image.getHeight(); j++) {
+                        int p = image.getRGB(i, j);
+                        int alpha = (p >> 24) & 0xff;
+                        int red = (p >> 16) & 0xff;
+                        int green = (p >> 8) & 0xff;
+                        int newPixel = 0;
+                        newPixel += alpha;
+                        newPixel = newPixel << 8;
+                        newPixel += red;
+                        newPixel = newPixel << 8;
+                        newPixel += green;
+                        newPixel = newPixel << 8;
+                        newPixel += blueSlider.slider.getValue();
+                        image.setRGB(i, j, newPixel);
+                        imagePanel.repaint();
+                        imagePanel.revalidate();
+                        Frame.this.repaint();
+                    }
+                }
+            }
+        });
+        Frame.this.add(redSlider);
+        Frame.this.add(greenSlider);
+        Frame.this.add(blueSlider);
     }
 
     private class myActionListener2 implements ActionListener {
@@ -98,34 +197,11 @@ public class Frame extends JFrame {
                 File file = jFileChooser.getSelectedFile();
                 try {
                     image = ImageIO.read(file);
+                    ColorModel cm = image.getColorModel();
+                    boolean isAlphaPreMultiplied = cm.isAlphaPremultiplied();
+                    WritableRaster raster = image.copyData(null);
+                    backupImage = new BufferedImage(cm, raster, isAlphaPreMultiplied, null);
                     imagePanel = new ImagePanel(image);
-                    redSlider=new ColorSliderPanel("Red value");
-                    redSlider.slider.addChangeListener(new ChangeListener() {
-                        public void stateChanged(ChangeEvent e) {
-                            for (int i = 0; i <image.getWidth() ; i++) {
-                                for (int j = 0; j < image.getHeight(); j++) {
-                                    int p = image.getRGB(i,j);
-                                    int alpha = (p>>24)&0xff;
-                                    int red= (p>>16)&0xff;
-                                    int green = (p>>8)&0xff;
-                                    int blue=(p)&0xff;
-                                    int newPixel = 0;
-                                    newPixel += alpha;
-                                    newPixel = newPixel << 8;
-                                    newPixel += redSlider.slider.getValue();
-                                    newPixel = newPixel << 8;
-                                    newPixel += green;
-                                    newPixel = newPixel << 8;
-                                    newPixel += blue;
-                                    image.setRGB(i,j,newPixel);
-                                    imagePanel.repaint();
-                                    imagePanel.revalidate();
-                                    Frame.this.repaint();
-                                }
-                            }
-                        }
-                    });
-                    Frame.this.add(redSlider);
                     rotateSliderPanel = new RotateSliderPanel();
                     loadingPhotoActs();
                     Frame.this.add(rotateSliderPanel);
@@ -144,11 +220,20 @@ public class Frame extends JFrame {
         public void actionPerformed(ActionEvent ae) {
             imagePanel.setVisible(false);
             rotateSliderPanel.setVisible(false);
+            redSlider.setVisible(false);
+            greenSlider.setVisible(false);
+            blueSlider.setVisible(false);
             if (textField != null) textField.setVisible(false);
+            resetButton = null;
+            redSlider = null;
+            greenSlider = null;
+            blueSlider = null;
             textField = null;
             rotateSliderPanel = null;
-            imagePanel = null;
             image = null;
+            imagePanel = null;
+            backupImage = null;
+            myText = null;
         }
     }
 
