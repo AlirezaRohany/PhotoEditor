@@ -26,6 +26,7 @@ public class Frame extends JFrame {
     private ColorSliderPanel redSlider, blueSlider, greenSlider;
     private JButton resetButton;
     private BufferedImage backupImage;
+    Point mousePt;
 
     public Frame(int defaultCloseOperation, int width, int height) throws IOException {
         super("Photo Editor");
@@ -284,10 +285,22 @@ public class Frame extends JFrame {
         if (myText != null && imagePanel != null) {
             JLabel label = new JLabel(myText);
             label.setBounds(250, 100, 100, 100);
+            label.addMouseListener(new MouseAdapter() {
+
+                public void mousePressed(MouseEvent e) {
+                    mousePt = e.getPoint();
+                    repaint();
+                }
+            });
             label.addMouseMotionListener(new MouseAdapter() {
                 public void mouseDragged(MouseEvent me) {
-                    label.setLocation(me.getX(), me.getY());
-                    label.repaint();
+                    int dx = me.getX() - mousePt.x;
+                    int dy = me.getY() - mousePt.y;
+                    label.setLocation(label.getX() + dx, label.getY() + dy);
+                    mousePt = me.getPoint();
+                    repaint();
+                    revalidate();
+                    Frame.this.setVisible(true);
                     Frame.this.repaint();
                 }
             });
