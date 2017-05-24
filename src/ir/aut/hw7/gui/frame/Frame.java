@@ -1,10 +1,13 @@
 package ir.aut.hw7.gui.frame;
 
+import ir.aut.hw7.gui.panel.ColorSliderPanel;
 import ir.aut.hw7.gui.panel.ImagePanel;
 import ir.aut.hw7.gui.panel.RotateSliderPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
@@ -18,7 +21,7 @@ public class Frame extends JFrame {
     private String myText;
     private RotateSliderPanel rotateSliderPanel;
     private JTextField textField;
-    private JLabel label;
+    private ColorSliderPanel redSlider,blueSlider,greenSlider;
 
     public Frame(int defaultCloseOperation, int width, int height) throws IOException {
         super("Photo Editor");
@@ -65,7 +68,7 @@ public class Frame extends JFrame {
             g.fillRect(0, 0, 650, 800);
             imagePanel = new ImagePanel(image);
             rotateSliderPanel = new RotateSliderPanel();
-            sliderAct();
+            loadingPhotoActs();
             Frame.this.add(rotateSliderPanel);
             Frame.this.add(imagePanel);
             Frame.this.setVisible(true);
@@ -74,7 +77,7 @@ public class Frame extends JFrame {
         }
     }
 
-    private void sliderAct() {
+    private void loadingPhotoActs() {
         rotateSliderPanel.slider.addChangeListener(e -> {
             imagePanel.setDegree(rotateSliderPanel.slider.getValue());
             imagePanel.repaint();
@@ -96,8 +99,35 @@ public class Frame extends JFrame {
                 try {
                     image = ImageIO.read(file);
                     imagePanel = new ImagePanel(image);
+                    redSlider=new ColorSliderPanel("Red value");
+                    redSlider.slider.addChangeListener(new ChangeListener() {
+                        public void stateChanged(ChangeEvent e) {
+                            for (int i = 0; i <image.getWidth() ; i++) {
+                                for (int j = 0; j < image.getHeight(); j++) {
+                                    int p = image.getRGB(i,j);
+                                    int alpha = (p>>24)&0xff;
+                                    int red= (p>>16)&0xff;
+                                    int green = (p>>8)&0xff;
+                                    int blue=(p)&0xff;
+                                    int newPixel = 0;
+                                    newPixel += alpha;
+                                    newPixel = newPixel << 8;
+                                    newPixel += redSlider.slider.getValue();
+                                    newPixel = newPixel << 8;
+                                    newPixel += green;
+                                    newPixel = newPixel << 8;
+                                    newPixel += blue;
+                                    image.setRGB(i,j,newPixel);
+                                    imagePanel.repaint();
+                                    imagePanel.revalidate();
+                                    Frame.this.repaint();
+                                }
+                            }
+                        }
+                    });
+                    Frame.this.add(redSlider);
                     rotateSliderPanel = new RotateSliderPanel();
-                    sliderAct();
+                    loadingPhotoActs();
                     Frame.this.add(rotateSliderPanel);
                     Frame.this.add(imagePanel);
                     Frame.this.setVisible(true);
@@ -167,7 +197,7 @@ public class Frame extends JFrame {
 
     private void printText() {
         if (myText != null && imagePanel != null) {
-            label = new JLabel(myText);
+            JLabel label = new JLabel(myText);
             label.setBounds(250, 100, 100, 100);
             label.addMouseMotionListener(new MouseAdapter() {
                 public void mouseDragged(MouseEvent me) {
