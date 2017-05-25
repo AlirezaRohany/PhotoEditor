@@ -26,7 +26,7 @@ public class Frame extends JFrame {
     private ColorSliderPanel redSlider, blueSlider, greenSlider;
     private JButton resetButton;
     private BufferedImage backupImage;
-    Point mousePt;
+    private Point mousePt;
 
     public Frame(int defaultCloseOperation, int width, int height) throws IOException {
         super("Photo Editor");
@@ -225,6 +225,7 @@ public class Frame extends JFrame {
             greenSlider.setVisible(false);
             blueSlider.setVisible(false);
             if (textField != null) textField.setVisible(false);
+            resetButton.setVisible(false);
             resetButton = null;
             redSlider = null;
             greenSlider = null;
@@ -286,7 +287,6 @@ public class Frame extends JFrame {
             JLabel label = new JLabel(myText);
             label.setBounds(250, 100, 100, 100);
             label.addMouseListener(new MouseAdapter() {
-
                 public void mousePressed(MouseEvent e) {
                     mousePt = e.getPoint();
                     repaint();
