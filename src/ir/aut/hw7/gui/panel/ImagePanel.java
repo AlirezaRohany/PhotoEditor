@@ -48,5 +48,4 @@ public class ImagePanel extends JPanel {
     public void setY2(int y2) {
         this.y2 = y2;
     }
-
 }
