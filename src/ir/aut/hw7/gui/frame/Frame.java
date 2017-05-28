@@ -24,9 +24,10 @@ public class Frame extends JFrame {
     private RotateSliderPanel rotateSliderPanel;
     private JTextField textField;
     private ColorSliderPanel redSlider, blueSlider, greenSlider;
-    private JButton resetButton;
+    private JButton resetButton, cropButton;
     private BufferedImage backupImage;
     private Point mousePt;
+    private int x1, y1, x2, y2;
 
     public Frame(int defaultCloseOperation, int width, int height) throws IOException {
         super("Photo Editor");
@@ -67,10 +68,10 @@ public class Frame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Please first close the current image!");
                 return;
             }
-            image = new BufferedImage(650, 800, BufferedImage.TYPE_INT_RGB);
+            image = new BufferedImage(960, 1280, BufferedImage.TYPE_INT_RGB);
             Graphics g = image.getGraphics();
             g.setColor(Color.WHITE);
-            g.fillRect(0, 0, 650, 800);
+            g.fillRect(0, 0, 960, 1280);
             ColorModel cm = image.getColorModel();
             boolean isAlphaPreMultiplied = cm.isAlphaPremultiplied();
             WritableRaster raster = image.copyData(null);
@@ -87,10 +88,61 @@ public class Frame extends JFrame {
     }
 
     private void loadingPhotoActs() {
-        resetButton = new JButton("reset the photo to default");
+        cropButton = new JButton("Crop");
+        cropButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                imagePanel.addMouseListener(new MouseAdapter() {
+                    public void mousePressed(MouseEvent evt) {
+                        x1 = evt.getX();
+                        y1 = evt.getY();
+                    }
+
+                    public void mouseReleased(MouseEvent evt) {
+                        x2 = evt.getX();
+                        y2 = evt.getY();
+                        if (x2 > x1) {
+                            imagePanel.setX1(x1);
+                            imagePanel.setX2(x2);
+                        } else {
+                            imagePanel.setX1(x2);
+                            imagePanel.setX2(x1);
+                        }
+                        if (y2 > y1) {
+                            imagePanel.setY1(y1);
+                            imagePanel.setY2(y2);
+                        } else {
+                            imagePanel.setY1(y2);
+                            imagePanel.setY2(y1);
+                        }
+                        imagePanel.setVisible(true);
+                        imagePanel.repaint();
+                        Frame.this.repaint();
+                    }
+                });
+                imagePanel.addMouseMotionListener(new MouseAdapter() {
+                    public void mouseDragged(MouseEvent evt) {
+                        x2 = evt.getX();
+                        y2 = evt.getY();
+                        imagePanel.getGraphics().setColor(Color.WHITE);
+                        if (x2 > x1 && y2 > y1) imagePanel.getGraphics().drawRect(x1, y1, x2 - x1, y2 - y1);
+                        else if (x2 > x1 && y2 < y1) imagePanel.getGraphics().drawRect(x1, y2, x2 - x1, y1 - y2);
+                        else if (x2 < x1 && y2 > y1) imagePanel.getGraphics().drawRect(x2, y1, x1 - x2, y2 - y1);
+                        else if (x2 < x1 && y2 < y1) imagePanel.getGraphics().drawRect(x2, y2, x1 - x2, y1 - y2);
+                        imagePanel.repaint();
+                        imagePanel.setVisible(true);
+                        Frame.this.repaint();
+                        Frame.this.setVisible(true);
+                    }
+                });
+            }
+        });
+        Frame.this.add(cropButton);
+        resetButton = new JButton("Reset the photo to default (you can use this item once)");
         resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 imagePanel.setVisible(false);
+                if (textField != null) textField.setVisible(false);
+                textField = null;
                 image = backupImage;
                 imagePanel = new ImagePanel(image);
                 imagePanel.setVisible(true);
@@ -103,7 +155,6 @@ public class Frame extends JFrame {
         rotateSliderPanel.slider.addChangeListener(e -> {
             imagePanel.setDegree(rotateSliderPanel.slider.getValue());
             imagePanel.repaint();
-            Frame.this.revalidate();
             Frame.this.repaint();
         });
         redSlider = new ColorSliderPanel("Red value");
@@ -125,7 +176,6 @@ public class Frame extends JFrame {
                         newPixel += blue;
                         image.setRGB(i, j, newPixel);
                         imagePanel.repaint();
-                        imagePanel.revalidate();
                         Frame.this.repaint();
                     }
                 }
@@ -150,7 +200,6 @@ public class Frame extends JFrame {
                         newPixel += blue;
                         image.setRGB(i, j, newPixel);
                         imagePanel.repaint();
-                        imagePanel.revalidate();
                         Frame.this.repaint();
                     }
                 }
@@ -175,7 +224,6 @@ public class Frame extends JFrame {
                         newPixel += blueSlider.slider.getValue();
                         image.setRGB(i, j, newPixel);
                         imagePanel.repaint();
-                        imagePanel.revalidate();
                         Frame.this.repaint();
                     }
                 }
@@ -221,6 +269,7 @@ public class Frame extends JFrame {
         public void actionPerformed(ActionEvent ae) {
             imagePanel.setVisible(false);
             rotateSliderPanel.setVisible(false);
+            cropButton.setVisible(false);
             redSlider.setVisible(false);
             greenSlider.setVisible(false);
             blueSlider.setVisible(false);
@@ -236,6 +285,7 @@ public class Frame extends JFrame {
             imagePanel = null;
             backupImage = null;
             myText = null;
+            cropButton = null;
         }
     }
 
@@ -264,8 +314,8 @@ public class Frame extends JFrame {
     private class myActionListener5 implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             if (textField != null) return;
-            textField = new JTextField("Enter text here");
-            textField.setPreferredSize(new Dimension(100, 25));
+            textField = new JTextField("Enter text here", 30);
+//            textField.setPreferredSize(new Dimension(200, 25));
             textField.addActionListener(e -> {
                 String str;
                 if (e.getSource() == textField) {

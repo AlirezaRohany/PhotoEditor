@@ -10,8 +10,8 @@ public class RotateSliderPanel extends JPanel {
         this.setPreferredSize(new Dimension(150, 600));
         slider = new JSlider(JSlider.VERTICAL, 0, 360, 0);
         slider.setPreferredSize(new Dimension(120, 560));
-        slider.setMinorTickSpacing(2);
-        slider.setMajorTickSpacing(10);
+        slider.setMinorTickSpacing(5);
+        slider.setMajorTickSpacing(25);
         this.setBorder(BorderFactory.createTitledBorder("Rotating degree"));
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);

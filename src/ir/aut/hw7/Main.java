@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            new Frame(JFrame.EXIT_ON_CLOSE, 1500, 1000);
+            new Frame(JFrame.EXIT_ON_CLOSE, 2500, 1600);
         } catch (IOException e) {
             e.printStackTrace();
         }
