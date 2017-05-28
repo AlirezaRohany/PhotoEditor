@@ -166,15 +166,15 @@ public class Frame extends JFrame {
                         int alpha = (p >> 24) & 0xff;
                         int green = (p >> 8) & 0xff;
                         int blue = (p) & 0xff;
-                        int newPixel = 0;
-                        newPixel += alpha;
-                        newPixel = newPixel << 8;
-                        newPixel += redSlider.slider.getValue();
-                        newPixel = newPixel << 8;
-                        newPixel += green;
-                        newPixel = newPixel << 8;
-                        newPixel += blue;
-                        image.setRGB(i, j, newPixel);
+                        int myNewPixel = 0;
+                        myNewPixel += alpha;
+                        myNewPixel = myNewPixel << 8;
+                        myNewPixel += redSlider.slider.getValue();
+                        myNewPixel = myNewPixel << 8;
+                        myNewPixel += green;
+                        myNewPixel = myNewPixel << 8;
+                        myNewPixel += blue;
+                        image.setRGB(i, j, myNewPixel);
                         imagePanel.repaint();
                         Frame.this.repaint();
                     }
@@ -315,7 +315,8 @@ public class Frame extends JFrame {
         public void actionPerformed(ActionEvent ae) {
             if (textField != null) return;
             textField = new JTextField("Enter text here", 30);
-//            textField.setPreferredSize(new Dimension(200, 25));
+            textField.setPreferredSize(new Dimension(250, 50));
+            textField.setFont(new Font("Courier", Font.BOLD, 20));
             textField.addActionListener(e -> {
                 String str;
                 if (e.getSource() == textField) {
@@ -335,8 +336,13 @@ public class Frame extends JFrame {
     private void printText() {
         if (myText != null && imagePanel != null) {
             JLabel label = new JLabel(myText);
-            label.setBounds(250, 100, 100, 100);
+            label.setBounds(250, 200, 300, 80);
+            label.setFont(new Font("Courier", Font.BOLD, 20));
             label.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    label.setFont(new Font("Courier", Font.BOLD, Integer.parseInt(JOptionPane.showInputDialog("Please enter the font size:"))));
+                }
+
                 public void mousePressed(MouseEvent e) {
                     mousePt = e.getPoint();
                     repaint();
@@ -348,7 +354,7 @@ public class Frame extends JFrame {
                     int dy = me.getY() - mousePt.y;
                     label.setLocation(label.getX() + dx, label.getY() + dy);
                     mousePt = me.getPoint();
-                    repaint();
+                    imagePanel.repaint();
                     revalidate();
                     Frame.this.setVisible(true);
                     Frame.this.repaint();
