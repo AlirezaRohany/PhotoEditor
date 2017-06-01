@@ -7,8 +7,6 @@ import ir.aut.hw7.gui.panel.RotateSliderPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
@@ -91,87 +89,81 @@ public class Frame extends JFrame {
 
     private void loadingPhotoActs() {
         filterButton = new JButton("Filters");
-        filterButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                MaskFilter maskFilter = new MaskFilter();
-                maskFilter.filter(image, image);
-                Frame.this.repaint();
-            }
+        filterButton.addActionListener(e -> {
+            MaskFilter maskFilter = new MaskFilter();
+            maskFilter.filter(image, image);
+            Frame.this.repaint();
         });
         Frame.this.add(filterButton);
         cropButton = new JButton("Crop");
-        cropButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Image is ready to crop.");
-                imagePanel.addMouseListener(new MouseAdapter() {
-                    public void mousePressed(MouseEvent evt) {
-                        x1 = evt.getX();
-                        y1 = evt.getY();
-                        Cursor cursor;
-                        cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
-                        setCursor(cursor);
-                    }
+        cropButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(null, "Image is ready to crop.");
+            imagePanel.addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent evt) {
+                    x1 = evt.getX();
+                    y1 = evt.getY();
+                    Cursor cursor;
+                    cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+                    setCursor(cursor);
+                }
 
-                    public void mouseReleased(MouseEvent evt) {
-                        x2 = evt.getX();
-                        y2 = evt.getY();
-                        if (x2 > x1) {
-                            imagePanel.setX1(x1);
-                            imagePanel.setX2(x2);
-                        } else {
-                            imagePanel.setX1(x2);
-                            imagePanel.setX2(x1);
-                        }
-                        if (y2 > y1) {
-                            imagePanel.setY1(y1);
-                            imagePanel.setY2(y2);
-                        } else {
-                            imagePanel.setY1(y2);
-                            imagePanel.setY2(y1);
-                        }
-                        Cursor cursor;
-                        cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-                        setCursor(cursor);
-                        imagePanel.setVisible(true);
-                        imagePanel.repaint();
-                        Frame.this.repaint();
+                public void mouseReleased(MouseEvent evt) {
+                    x2 = evt.getX();
+                    y2 = evt.getY();
+                    if (x2 > x1) {
+                        imagePanel.setX1(x1);
+                        imagePanel.setX2(x2);
+                    } else {
+                        imagePanel.setX1(x2);
+                        imagePanel.setX2(x1);
                     }
-                });
-                imagePanel.addMouseMotionListener(new MouseAdapter() {
-                    public void mouseDragged(MouseEvent evt) {
-                        x2 = evt.getX();
-                        y2 = evt.getY();
-                        imagePanel.getGraphics().setColor(Color.BLACK);
-                        if (x2 > x1 && y2 > y1) imagePanel.getGraphics().drawRect(x1, y1, x2 - x1, y2 - y1);
-                        else if (x2 > x1 && y2 < y1) imagePanel.getGraphics().drawRect(x1, y2, x2 - x1, y1 - y2);
-                        else if (x2 < x1 && y2 > y1) imagePanel.getGraphics().drawRect(x2, y1, x1 - x2, y2 - y1);
-                        else if (x2 < x1 && y2 < y1) imagePanel.getGraphics().drawRect(x2, y2, x1 - x2, y1 - y2);
-                        Cursor cursor;
-                        cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
-                        setCursor(cursor);
-                        imagePanel.repaint();
-                        imagePanel.setVisible(true);
-                        Frame.this.repaint();
-                        Frame.this.setVisible(true);
+                    if (y2 > y1) {
+                        imagePanel.setY1(y1);
+                        imagePanel.setY2(y2);
+                    } else {
+                        imagePanel.setY1(y2);
+                        imagePanel.setY2(y1);
                     }
-                });
-            }
+                    Cursor cursor;
+                    cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+                    setCursor(cursor);
+                    imagePanel.setVisible(true);
+                    imagePanel.repaint();
+                    Frame.this.repaint();
+                }
+            });
+            imagePanel.addMouseMotionListener(new MouseAdapter() {
+                public void mouseDragged(MouseEvent evt) {
+                    x2 = evt.getX();
+                    y2 = evt.getY();
+                    imagePanel.getGraphics().setColor(Color.BLACK);
+                    if (x2 > x1 && y2 > y1) imagePanel.getGraphics().drawRect(x1, y1, x2 - x1, y2 - y1);
+                    else if (x2 > x1 && y2 < y1) imagePanel.getGraphics().drawRect(x1, y2, x2 - x1, y1 - y2);
+                    else if (x2 < x1 && y2 > y1) imagePanel.getGraphics().drawRect(x2, y1, x1 - x2, y2 - y1);
+                    else if (x2 < x1 && y2 < y1) imagePanel.getGraphics().drawRect(x2, y2, x1 - x2, y1 - y2);
+                    Cursor cursor;
+                    cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+                    setCursor(cursor);
+                    imagePanel.repaint();
+                    imagePanel.setVisible(true);
+                    Frame.this.repaint();
+                    Frame.this.setVisible(true);
+                }
+            });
         });
         Frame.this.add(cropButton);
         resetButton = new JButton("Reset the photo to default");
-        resetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                imagePanel.setVisible(false);
-                if (textField != null) textField.setVisible(false);
-                textField = null;
-                for (int i = 0; i < image.getWidth(); i++)
-                    for (int j = 0; j < image.getHeight(); j++) image.setRGB(i, j, backupImage.getRGB(i, j));
-                imagePanel = new ImagePanel(image);
-                imagePanel.setVisible(true);
-                imagePanel.repaint();
-                Frame.this.add(imagePanel);
-                repaint();
-            }
+        resetButton.addActionListener(e -> {
+            imagePanel.setVisible(false);
+            if (textField != null) textField.setVisible(false);
+            textField = null;
+            for (int i = 0; i < image.getWidth(); i++)
+                for (int j = 0; j < image.getHeight(); j++) image.setRGB(i, j, backupImage.getRGB(i, j));
+            imagePanel = new ImagePanel(image);
+            imagePanel.setVisible(true);
+            imagePanel.repaint();
+            Frame.this.add(imagePanel);
+            repaint();
         });
         Frame.this.add(resetButton);
         rotateSliderPanel.slider.addChangeListener(e -> {
@@ -180,74 +172,68 @@ public class Frame extends JFrame {
             Frame.this.repaint();
         });
         redSlider = new ColorSliderPanel("Red value");
-        redSlider.slider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                for (int i = 0; i < image.getWidth(); i++) {
-                    for (int j = 0; j < image.getHeight(); j++) {
-                        int p = image.getRGB(i, j);
-                        int alpha = (p >> 24) & 0xff;
-                        int green = (p >> 8) & 0xff;
-                        int blue = (p) & 0xff;
-                        int myNewPixel = 0;
-                        myNewPixel += alpha;
-                        myNewPixel = myNewPixel << 8;
-                        myNewPixel += redSlider.slider.getValue();
-                        myNewPixel = myNewPixel << 8;
-                        myNewPixel += green;
-                        myNewPixel = myNewPixel << 8;
-                        myNewPixel += blue;
-                        image.setRGB(i, j, myNewPixel);
-                        imagePanel.repaint();
-                        Frame.this.repaint();
-                    }
+        redSlider.slider.addChangeListener(e -> {
+            for (int i = 0; i < image.getWidth(); i++) {
+                for (int j = 0; j < image.getHeight(); j++) {
+                    int p = image.getRGB(i, j);
+                    int alpha = (p >> 24) & 0xff;
+                    int green = (p >> 8) & 0xff;
+                    int blue = (p) & 0xff;
+                    int myNewPixel = 0;
+                    myNewPixel += alpha;
+                    myNewPixel = myNewPixel << 8;
+                    myNewPixel += redSlider.slider.getValue();
+                    myNewPixel = myNewPixel << 8;
+                    myNewPixel += green;
+                    myNewPixel = myNewPixel << 8;
+                    myNewPixel += blue;
+                    image.setRGB(i, j, myNewPixel);
+                    imagePanel.repaint();
+                    Frame.this.repaint();
                 }
             }
         });
         greenSlider = new ColorSliderPanel("Green value");
-        greenSlider.slider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                for (int i = 0; i < image.getWidth(); i++) {
-                    for (int j = 0; j < image.getHeight(); j++) {
-                        int p = image.getRGB(i, j);
-                        int alpha = (p >> 24) & 0xff;
-                        int red = (p >> 16) & 0xff;
-                        int blue = (p) & 0xff;
-                        int newPixel = 0;
-                        newPixel += alpha;
-                        newPixel = newPixel << 8;
-                        newPixel += red;
-                        newPixel = newPixel << 8;
-                        newPixel += greenSlider.slider.getValue();
-                        newPixel = newPixel << 8;
-                        newPixel += blue;
-                        image.setRGB(i, j, newPixel);
-                        imagePanel.repaint();
-                        Frame.this.repaint();
-                    }
+        greenSlider.slider.addChangeListener(e -> {
+            for (int i = 0; i < image.getWidth(); i++) {
+                for (int j = 0; j < image.getHeight(); j++) {
+                    int p = image.getRGB(i, j);
+                    int alpha = (p >> 24) & 0xff;
+                    int red = (p >> 16) & 0xff;
+                    int blue = (p) & 0xff;
+                    int newPixel = 0;
+                    newPixel += alpha;
+                    newPixel = newPixel << 8;
+                    newPixel += red;
+                    newPixel = newPixel << 8;
+                    newPixel += greenSlider.slider.getValue();
+                    newPixel = newPixel << 8;
+                    newPixel += blue;
+                    image.setRGB(i, j, newPixel);
+                    imagePanel.repaint();
+                    Frame.this.repaint();
                 }
             }
         });
         blueSlider = new ColorSliderPanel("Blue value");
-        blueSlider.slider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                for (int i = 0; i < image.getWidth(); i++) {
-                    for (int j = 0; j < image.getHeight(); j++) {
-                        int p = image.getRGB(i, j);
-                        int alpha = (p >> 24) & 0xff;
-                        int red = (p >> 16) & 0xff;
-                        int green = (p >> 8) & 0xff;
-                        int newPixel = 0;
-                        newPixel += alpha;
-                        newPixel = newPixel << 8;
-                        newPixel += red;
-                        newPixel = newPixel << 8;
-                        newPixel += green;
-                        newPixel = newPixel << 8;
-                        newPixel += blueSlider.slider.getValue();
-                        image.setRGB(i, j, newPixel);
-                        imagePanel.repaint();
-                        Frame.this.repaint();
-                    }
+        blueSlider.slider.addChangeListener(e -> {
+            for (int i = 0; i < image.getWidth(); i++) {
+                for (int j = 0; j < image.getHeight(); j++) {
+                    int p = image.getRGB(i, j);
+                    int alpha = (p >> 24) & 0xff;
+                    int red = (p >> 16) & 0xff;
+                    int green = (p >> 8) & 0xff;
+                    int newPixel = 0;
+                    newPixel += alpha;
+                    newPixel = newPixel << 8;
+                    newPixel += red;
+                    newPixel = newPixel << 8;
+                    newPixel += green;
+                    newPixel = newPixel << 8;
+                    newPixel += blueSlider.slider.getValue();
+                    image.setRGB(i, j, newPixel);
+                    imagePanel.repaint();
+                    Frame.this.repaint();
                 }
             }
         });
@@ -375,63 +361,37 @@ public class Frame extends JFrame {
                     final JButton colorButton = new JButton("Change text color");
                     final JButton deleteButton = new JButton("Delete the text");
 
-                    sizeButton.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            String str = JOptionPane.showInputDialog("Please enter the font size:");
-                            if (str != null) label.setFont(new Font("Courier", Font.BOLD, Integer.parseInt(str)));
-                        }
+                    sizeButton.addActionListener(e15 -> {
+                        String str = JOptionPane.showInputDialog("Please enter the font size:");
+                        if (str != null) label.setFont(new Font("Courier", Font.BOLD, Integer.parseInt(str)));
                     });
-                    deleteButton.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            label.setVisible(false);
-                        }
+                    deleteButton.addActionListener(e14 -> label.setVisible(false));
+                    editTextButton.addActionListener(e13 -> {
+                        String str = JOptionPane.showInputDialog("Please enter the new text you want to replace with the first one:");
+                        if (str != null) label.setText(str);
                     });
-                    editTextButton.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            String str = JOptionPane.showInputDialog("Please enter the new text you want to replace with the first one:");
-                            if (str != null) label.setText(str);
-                        }
-                    });
-                    colorButton.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            final JPanel colorPanel = new JPanel();
-                            final JRadioButton blackButton = new JRadioButton("black");
-                            final JRadioButton blueButton = new JRadioButton("blue");
-                            final JRadioButton redButton = new JRadioButton("red");
-                            final JRadioButton greenButton = new JRadioButton("green");
-                            final ButtonGroup buttonGroup = new ButtonGroup();
-                            buttonGroup.add(blackButton);
-                            buttonGroup.add(blueButton);
-                            buttonGroup.add(redButton);
-                            buttonGroup.add(greenButton);
+                    colorButton.addActionListener(e12 -> {
+                        final JPanel colorPanel = new JPanel();
+                        final JRadioButton blackButton = new JRadioButton("black");
+                        final JRadioButton blueButton = new JRadioButton("blue");
+                        final JRadioButton redButton = new JRadioButton("red");
+                        final JRadioButton greenButton = new JRadioButton("green");
+                        final ButtonGroup buttonGroup = new ButtonGroup();
+                        buttonGroup.add(blackButton);
+                        buttonGroup.add(blueButton);
+                        buttonGroup.add(redButton);
+                        buttonGroup.add(greenButton);
 
-                            redButton.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    label.setForeground(Color.RED);
-                                }
-                            });
-                            blackButton.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    label.setForeground(Color.BLACK);
-                                }
-                            });
-                            blueButton.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    label.setForeground(Color.BLUE);
-                                }
-                            });
-                            greenButton.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    label.setForeground(Color.GREEN);
-                                }
-                            });
+                        redButton.addActionListener(e1 -> label.setForeground(Color.RED));
+                        blackButton.addActionListener(e1213 -> label.setForeground(Color.BLACK));
+                        blueButton.addActionListener(e1212 -> label.setForeground(Color.BLUE));
+                        greenButton.addActionListener(e121 -> label.setForeground(Color.GREEN));
 
-                            colorPanel.add(blackButton);
-                            colorPanel.add(greenButton);
-                            colorPanel.add(redButton);
-                            colorPanel.add(blueButton);
-                            JOptionPane.showMessageDialog(null, colorPanel);
-                        }
+                        colorPanel.add(blackButton);
+                        colorPanel.add(greenButton);
+                        colorPanel.add(redButton);
+                        colorPanel.add(blueButton);
+                        JOptionPane.showMessageDialog(null, colorPanel);
                     });
 
                     textEditPanel.add(editTextButton);
