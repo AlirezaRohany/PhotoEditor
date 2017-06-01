@@ -1,5 +1,6 @@
 package ir.aut.hw7.gui.frame;
 
+import com.jhlabs.image.MaskFilter;
 import ir.aut.hw7.gui.panel.ColorSliderPanel;
 import ir.aut.hw7.gui.panel.ImagePanel;
 import ir.aut.hw7.gui.panel.RotateSliderPanel;
@@ -18,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Frame extends JFrame {
-    private BufferedImage image;
+    private BufferedImage image = null;
     private ImagePanel imagePanel;
     private String myText;
     private RotateSliderPanel rotateSliderPanel;
@@ -26,8 +27,9 @@ public class Frame extends JFrame {
     private ColorSliderPanel redSlider, blueSlider, greenSlider;
     private JButton resetButton, cropButton;
     private BufferedImage backupImage;
-    private Point mousePt;
+    private Point mousePt1, mousePt2;
     private int x1, y1, x2, y2;
+    private JButton filterButton;
 
     public Frame(int defaultCloseOperation, int width, int height) throws IOException {
         super("Photo Editor");
@@ -88,9 +90,19 @@ public class Frame extends JFrame {
     }
 
     private void loadingPhotoActs() {
+        filterButton = new JButton("Filters");
+        filterButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MaskFilter maskFilter = new MaskFilter();
+                maskFilter.filter(image, image);
+                Frame.this.repaint();
+            }
+        });
+        Frame.this.add(filterButton);
         cropButton = new JButton("Crop");
         cropButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Image is ready to crop.");
                 imagePanel.addMouseListener(new MouseAdapter() {
                     public void mousePressed(MouseEvent evt) {
                         x1 = evt.getX();
@@ -137,18 +149,18 @@ public class Frame extends JFrame {
             }
         });
         Frame.this.add(cropButton);
-        resetButton = new JButton("Reset the photo to default (you can use this item once)");
+        resetButton = new JButton("Reset the photo to default");
         resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 imagePanel.setVisible(false);
                 if (textField != null) textField.setVisible(false);
                 textField = null;
-                image = backupImage;
+                for (int i = 0; i < image.getWidth(); i++)
+                    for (int j = 0; j < image.getHeight(); j++) image.setRGB(i, j, backupImage.getRGB(i, j));
                 imagePanel = new ImagePanel(image);
                 imagePanel.setVisible(true);
                 imagePanel.repaint();
                 Frame.this.add(imagePanel);
-                resetButton.setVisible(false);
             }
         });
         Frame.this.add(resetButton);
@@ -267,15 +279,17 @@ public class Frame extends JFrame {
 
     private class myActionListener3 implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
-            imagePanel.setVisible(false);
-            rotateSliderPanel.setVisible(false);
-            cropButton.setVisible(false);
-            redSlider.setVisible(false);
-            greenSlider.setVisible(false);
-            blueSlider.setVisible(false);
+            if (imagePanel != null) imagePanel.setVisible(false);
+            if (rotateSliderPanel != null) rotateSliderPanel.setVisible(false);
+            if (cropButton != null) cropButton.setVisible(false);
+            if (redSlider != null) redSlider.setVisible(false);
+            if (greenSlider != null) greenSlider.setVisible(false);
+            if (blueSlider != null) blueSlider.setVisible(false);
             if (textField != null) textField.setVisible(false);
-            resetButton.setVisible(false);
+            if (resetButton != null) resetButton.setVisible(false);
+            if (filterButton != null) filterButton.setVisible(false);
             resetButton = null;
+            filterButton = null;
             redSlider = null;
             greenSlider = null;
             blueSlider = null;
@@ -313,51 +327,54 @@ public class Frame extends JFrame {
 
     private class myActionListener5 implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
-            if (textField != null) return;
-            textField = new JTextField("Enter text here", 30);
-            textField.setPreferredSize(new Dimension(250, 50));
-            textField.setFont(new Font("Courier", Font.BOLD, 20));
-            textField.addActionListener(e -> {
-                String str;
-                if (e.getSource() == textField) {
-                    str = String.format("%s", e.getActionCommand());
-                    myText = str;
-                    JOptionPane.showMessageDialog(null, "This text is ready to use: " + myText);
-                    printText();
-                }
-            });
-            Frame.this.add(textField);
-            Frame.this.setVisible(true);
-            Frame.this.revalidate();
-            Frame.this.repaint();
+            if (imagePanel == null) {
+                JOptionPane.showMessageDialog(null, "Please first add an image!");
+            }
+            if (textField == null && imagePanel != null) {
+                textField = new JTextField("Enter text here", 30);
+                textField.setPreferredSize(new Dimension(250, 50));
+                textField.setFont(new Font("Courier", Font.BOLD, 20));
+                textField.addActionListener(e -> {
+                    String str;
+                    if (e.getSource() == textField) {
+                        str = String.format("%s", e.getActionCommand());
+                        myText = str;
+                        JOptionPane.showMessageDialog(null, "This text is ready to use: " + myText);
+                        printTextLabel();
+                    }
+                });
+                Frame.this.add(textField);
+                Frame.this.setVisible(true);
+                Frame.this.revalidate();
+                Frame.this.repaint();
+            }
         }
     }
 
-    private void printText() {
+    private void printTextLabel() {
         if (myText != null && imagePanel != null) {
             JLabel label = new JLabel(myText);
             label.setBounds(250, 200, 300, 80);
             label.setFont(new Font("Courier", Font.BOLD, 20));
             label.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
-                    label.setFont(new Font("Courier", Font.BOLD, Integer.parseInt(JOptionPane.showInputDialog("Please enter the font size:"))));
+                    String str = JOptionPane.showInputDialog("Please enter the font size:");
+                    if (str != null) label.setFont(new Font("Courier", Font.BOLD, Integer.parseInt(str)));
                 }
 
-                public void mousePressed(MouseEvent e) {
-                    mousePt = e.getPoint();
-                    repaint();
+                public void mousePressed(MouseEvent me) {
+                    Component component = (Component) me.getSource();
+                    mousePt1 = component.getLocation();
+                    mousePt2 = me.getLocationOnScreen();
+                }
+
+                public void mouseReleased(MouseEvent me) {
+                    setLocationAct(me);
                 }
             });
             label.addMouseMotionListener(new MouseAdapter() {
                 public void mouseDragged(MouseEvent me) {
-                    int dx = me.getX() - mousePt.x;
-                    int dy = me.getY() - mousePt.y;
-                    label.setLocation(label.getX() + dx, label.getY() + dy);
-                    mousePt = me.getPoint();
-                    imagePanel.repaint();
-                    revalidate();
-                    Frame.this.setVisible(true);
-                    Frame.this.repaint();
+                    setLocationAct(me);
                 }
             });
             imagePanel.add(label);
@@ -365,5 +382,14 @@ public class Frame extends JFrame {
             this.repaint();
             this.revalidate();
         }
+    }
+
+    private void setLocationAct(MouseEvent me) {
+        Component component = (Component) me.getSource();
+        Point locationOnScreen = me.getLocationOnScreen();
+        int x = locationOnScreen.x - mousePt2.x + mousePt1.x;
+        int y = locationOnScreen.y - mousePt2.y + mousePt1.y;
+        component.setLocation(x, y);
+        Frame.this.repaint();
     }
 }
