@@ -11,7 +11,8 @@ public class ImagePanel extends JPanel {
 
     public ImagePanel(BufferedImage img) {
         image = img;
-        setPreferredSize(new Dimension(960, 1280));
+//        setPreferredSize(new Dimension(960, 1280));
+        setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
         this.setLayout(null);
         x1 = y1 = 0;
         x2 = image.getWidth();
@@ -47,5 +48,9 @@ public class ImagePanel extends JPanel {
 
     public void setY2(int y2) {
         this.y2 = y2;
+    }
+
+    public BufferedImage getImage() {
+        return image;
     }
 }

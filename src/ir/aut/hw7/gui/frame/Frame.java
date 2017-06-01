@@ -107,6 +107,9 @@ public class Frame extends JFrame {
                     public void mousePressed(MouseEvent evt) {
                         x1 = evt.getX();
                         y1 = evt.getY();
+                        Cursor cursor;
+                        cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+                        setCursor(cursor);
                     }
 
                     public void mouseReleased(MouseEvent evt) {
@@ -126,6 +129,9 @@ public class Frame extends JFrame {
                             imagePanel.setY1(y2);
                             imagePanel.setY2(y1);
                         }
+                        Cursor cursor;
+                        cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+                        setCursor(cursor);
                         imagePanel.setVisible(true);
                         imagePanel.repaint();
                         Frame.this.repaint();
@@ -135,11 +141,14 @@ public class Frame extends JFrame {
                     public void mouseDragged(MouseEvent evt) {
                         x2 = evt.getX();
                         y2 = evt.getY();
-                        imagePanel.getGraphics().setColor(Color.WHITE);
+                        imagePanel.getGraphics().setColor(Color.BLACK);
                         if (x2 > x1 && y2 > y1) imagePanel.getGraphics().drawRect(x1, y1, x2 - x1, y2 - y1);
                         else if (x2 > x1 && y2 < y1) imagePanel.getGraphics().drawRect(x1, y2, x2 - x1, y1 - y2);
                         else if (x2 < x1 && y2 > y1) imagePanel.getGraphics().drawRect(x2, y1, x1 - x2, y2 - y1);
                         else if (x2 < x1 && y2 < y1) imagePanel.getGraphics().drawRect(x2, y2, x1 - x2, y1 - y2);
+                        Cursor cursor;
+                        cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+                        setCursor(cursor);
                         imagePanel.repaint();
                         imagePanel.setVisible(true);
                         Frame.this.repaint();
@@ -161,6 +170,7 @@ public class Frame extends JFrame {
                 imagePanel.setVisible(true);
                 imagePanel.repaint();
                 Frame.this.add(imagePanel);
+                repaint();
             }
         });
         Frame.this.add(resetButton);
@@ -317,7 +327,8 @@ public class Frame extends JFrame {
                     selectedFile = new File(fileName + ".png");
                     BufferedImage img = new BufferedImage(imagePanel.getWidth(), imagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
                     imagePanel.paint(img.getGraphics());
-                    ImageIO.write(img, "png", selectedFile);
+                    BufferedImage finalImg = img.getSubimage(0, 0, imagePanel.getImage().getWidth(), imagePanel.getImage().getHeight());
+                    ImageIO.write(finalImg, "png", selectedFile);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -353,28 +364,105 @@ public class Frame extends JFrame {
 
     private void printTextLabel() {
         if (myText != null && imagePanel != null) {
-            JLabel label = new JLabel(myText);
+            final JLabel label = new JLabel(myText);
             label.setBounds(250, 200, 300, 80);
             label.setFont(new Font("Courier", Font.BOLD, 20));
             label.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
-                    String str = JOptionPane.showInputDialog("Please enter the font size:");
-                    if (str != null) label.setFont(new Font("Courier", Font.BOLD, Integer.parseInt(str)));
+                    final JPanel textEditPanel = new JPanel();
+                    final JButton editTextButton = new JButton("Edit the text");
+                    final JButton sizeButton = new JButton("Change text size");
+                    final JButton colorButton = new JButton("Change text color");
+                    final JButton deleteButton = new JButton("Delete the text");
+
+                    sizeButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            String str = JOptionPane.showInputDialog("Please enter the font size:");
+                            if (str != null) label.setFont(new Font("Courier", Font.BOLD, Integer.parseInt(str)));
+                        }
+                    });
+                    deleteButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            label.setVisible(false);
+                        }
+                    });
+                    editTextButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            String str = JOptionPane.showInputDialog("Please enter the new text you want to replace with the first one:");
+                            if (str != null) label.setText(str);
+                        }
+                    });
+                    colorButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            final JPanel colorPanel = new JPanel();
+                            final JRadioButton blackButton = new JRadioButton("black");
+                            final JRadioButton blueButton = new JRadioButton("blue");
+                            final JRadioButton redButton = new JRadioButton("red");
+                            final JRadioButton greenButton = new JRadioButton("green");
+                            final ButtonGroup buttonGroup = new ButtonGroup();
+                            buttonGroup.add(blackButton);
+                            buttonGroup.add(blueButton);
+                            buttonGroup.add(redButton);
+                            buttonGroup.add(greenButton);
+
+                            redButton.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent e) {
+                                    label.setForeground(Color.RED);
+                                }
+                            });
+                            blackButton.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent e) {
+                                    label.setForeground(Color.BLACK);
+                                }
+                            });
+                            blueButton.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent e) {
+                                    label.setForeground(Color.BLUE);
+                                }
+                            });
+                            greenButton.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent e) {
+                                    label.setForeground(Color.GREEN);
+                                }
+                            });
+
+                            colorPanel.add(blackButton);
+                            colorPanel.add(greenButton);
+                            colorPanel.add(redButton);
+                            colorPanel.add(blueButton);
+                            JOptionPane.showMessageDialog(null, colorPanel);
+                        }
+                    });
+
+                    textEditPanel.add(editTextButton);
+                    textEditPanel.add(sizeButton);
+                    textEditPanel.add(colorButton);
+                    textEditPanel.add(deleteButton);
+                    JOptionPane.showMessageDialog(null, textEditPanel);
                 }
 
                 public void mousePressed(MouseEvent me) {
                     Component component = (Component) me.getSource();
                     mousePt1 = component.getLocation();
                     mousePt2 = me.getLocationOnScreen();
+                    Cursor cursor;
+                    cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+                    setCursor(cursor);
                 }
 
                 public void mouseReleased(MouseEvent me) {
                     setLocationAct(me);
+                    Cursor cursor;
+                    cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+                    setCursor(cursor);
                 }
             });
             label.addMouseMotionListener(new MouseAdapter() {
                 public void mouseDragged(MouseEvent me) {
                     setLocationAct(me);
+                    Cursor cursor;
+                    cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+                    setCursor(cursor);
                 }
             });
             imagePanel.add(label);
