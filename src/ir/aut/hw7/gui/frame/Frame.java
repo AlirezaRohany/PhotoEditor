@@ -49,21 +49,21 @@ public class Frame extends JFrame {
         JMenuItem item5 = new JMenuItem("Add Text", KeyEvent.VK_T);
         JMenuItem item6 = new JMenuItem("Add Sticker", KeyEvent.VK_S);
         menu1.add(item1);
-        item1.addActionListener(new myActionListener1());
+        item1.addActionListener(new newActionListener());
         menu1.add(item2);
-        item2.addActionListener(new myActionListener2());
+        item2.addActionListener(new openActionListener());
         menu1.add(item3);
-        item3.addActionListener(new myActionListener3());
+        item3.addActionListener(new closeActionListener());
         menu1.add(item4);
-        item4.addActionListener(new myActionListener4());
+        item4.addActionListener(new saveActionListener());
         menu2.add(item5);
-        item5.addActionListener(new myActionListener5());
+        item5.addActionListener(new addTextActionListener());
         menu2.add(item6);
         this.setJMenuBar(menuBar);
         this.setVisible(true);
     }
 
-    private class myActionListener1 implements ActionListener {
+    private class newActionListener implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             if (imagePanel != null) {
                 JOptionPane.showMessageDialog(null, "Please first close the current image!");
@@ -121,97 +121,71 @@ public class Frame extends JFrame {
             buttonGroup.add(thresholdButton);
             buttonGroup.add(displaceButton);
             buttonGroup.add(grayButton);
-            noneButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    BufferedImage bf = backupImage.getSubimage(0, 0, image.getWidth(), image.getHeight());
-                    for (int i = 0; i < image.getWidth(); i++)
-                        for (int j = 0; j < image.getHeight(); j++) image.setRGB(i, j, bf.getRGB(i, j));
-                    Frame.this.repaint();
-                }
+            noneButton.addActionListener(e13 -> {
+                BufferedImage bf = backupImage.getSubimage(0, 0, image.getWidth(), image.getHeight());
+                for (int i = 0; i < image.getWidth(); i++)
+                    for (int j = 0; j < image.getHeight(); j++) image.setRGB(i, j, bf.getRGB(i, j));
+                Frame.this.repaint();
             });
-            maskButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    MaskFilter maskFilter = new MaskFilter();
-                    maskFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            maskButton.addActionListener(e12 -> {
+                MaskFilter maskFilter = new MaskFilter();
+                maskFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            crystallizeButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    CrystallizeFilter crystallizeFilter = new CrystallizeFilter();
-                    crystallizeFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            crystallizeButton.addActionListener(e1 -> {
+                CrystallizeFilter crystallizeFilter = new CrystallizeFilter();
+                crystallizeFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            invertButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    InvertFilter invertFilter = new InvertFilter();
-                    invertFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            invertButton.addActionListener(e113 -> {
+                InvertFilter invertFilter = new InvertFilter();
+                invertFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            lookUpButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    LookupFilter lookupFilter = new LookupFilter();
-                    lookupFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            lookUpButton.addActionListener(e112 -> {
+                LookupFilter lookupFilter = new LookupFilter();
+                lookupFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            solarizeButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    SolarizeFilter solarizeFilter = new SolarizeFilter();
-                    solarizeFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            solarizeButton.addActionListener(e111 -> {
+                SolarizeFilter solarizeFilter = new SolarizeFilter();
+                solarizeFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            exposureButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    ExposureFilter exposureFilter = new ExposureFilter();
-                    exposureFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            exposureButton.addActionListener(e110 -> {
+                ExposureFilter exposureFilter = new ExposureFilter();
+                exposureFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            diffusionButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    DiffusionFilter diffusionFilter = new DiffusionFilter();
-                    diffusionFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            diffusionButton.addActionListener(e19 -> {
+                DiffusionFilter diffusionFilter = new DiffusionFilter();
+                diffusionFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            weaveButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    WeaveFilter weaveFilter = new WeaveFilter();
-                    weaveFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            weaveButton.addActionListener(e18 -> {
+                WeaveFilter weaveFilter = new WeaveFilter();
+                weaveFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            chromeButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    ChromeFilter chromeFilter = new ChromeFilter();
-                    chromeFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            chromeButton.addActionListener(e17 -> {
+                ChromeFilter chromeFilter = new ChromeFilter();
+                chromeFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            thresholdButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    ThresholdFilter thresholdFilter = new ThresholdFilter();
-                    thresholdFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            thresholdButton.addActionListener(e16 -> {
+                ThresholdFilter thresholdFilter = new ThresholdFilter();
+                thresholdFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            displaceButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    DisplaceFilter displaceFilter = new DisplaceFilter();
-                    displaceFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            displaceButton.addActionListener(e15 -> {
+                DisplaceFilter displaceFilter = new DisplaceFilter();
+                displaceFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
-            grayButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    GrayFilter grayFilter = new GrayFilter();
-                    grayFilter.filter(backupImage, image);
-                    Frame.this.repaint();
-                }
+            grayButton.addActionListener(e14 -> {
+                GrayFilter grayFilter = new GrayFilter();
+                grayFilter.filter(backupImage, image);
+                Frame.this.repaint();
             });
             filterPanel.add(noneButton);
             filterPanel.add(maskButton);
@@ -376,7 +350,7 @@ public class Frame extends JFrame {
         Frame.this.add(blueSlider);
     }
 
-    private class myActionListener2 implements ActionListener {
+    private class openActionListener implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             if (imagePanel != null) {
                 JOptionPane.showMessageDialog(null, "Please first close the current image!");
@@ -407,7 +381,7 @@ public class Frame extends JFrame {
         }
     }
 
-    private class myActionListener3 implements ActionListener {
+    private class closeActionListener implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             if (imagePanel != null) imagePanel.setVisible(false);
             if (rotateSliderPanel != null) rotateSliderPanel.setVisible(false);
@@ -433,7 +407,7 @@ public class Frame extends JFrame {
         }
     }
 
-    private class myActionListener4 implements ActionListener {
+    private class saveActionListener implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             JFileChooser jFileChooser = new JFileChooser();
             FileNameExtensionFilter pFilter = new FileNameExtensionFilter("png", "png");
@@ -456,7 +430,7 @@ public class Frame extends JFrame {
         }
     }
 
-    private class myActionListener5 implements ActionListener {
+    private class addTextActionListener implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             if (imagePanel == null) {
                 JOptionPane.showMessageDialog(null, "Please first add an image!");
