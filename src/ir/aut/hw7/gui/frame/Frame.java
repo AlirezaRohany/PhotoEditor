@@ -376,21 +376,43 @@ public class Frame extends JFrame {
                         final JRadioButton blueButton = new JRadioButton("blue");
                         final JRadioButton redButton = new JRadioButton("red");
                         final JRadioButton greenButton = new JRadioButton("green");
+                        final JRadioButton yellowButton = new JRadioButton("yellow");
+                        final JRadioButton grayButton = new JRadioButton("gray");
+                        final JRadioButton cyanButton = new JRadioButton("cyan");
+                        final JRadioButton orangeButton = new JRadioButton("orange");
+                        final JRadioButton magentaButton = new JRadioButton("magenta");
+                        final JRadioButton pinkButton = new JRadioButton("pink");
                         final ButtonGroup buttonGroup = new ButtonGroup();
                         buttonGroup.add(blackButton);
                         buttonGroup.add(blueButton);
                         buttonGroup.add(redButton);
                         buttonGroup.add(greenButton);
-
+                        buttonGroup.add(yellowButton);
+                        buttonGroup.add(cyanButton);
+                        buttonGroup.add(grayButton);
+                        buttonGroup.add(magentaButton);
+                        buttonGroup.add(orangeButton);
+                        buttonGroup.add(pinkButton);
                         redButton.addActionListener(e1 -> label.setForeground(Color.RED));
                         blackButton.addActionListener(e1213 -> label.setForeground(Color.BLACK));
                         blueButton.addActionListener(e1212 -> label.setForeground(Color.BLUE));
                         greenButton.addActionListener(e121 -> label.setForeground(Color.GREEN));
-
+                        yellowButton.addActionListener(e111 -> label.setForeground(Color.YELLOW));
+                        cyanButton.addActionListener(e110 -> label.setForeground(Color.CYAN));
+                        grayButton.addActionListener(e19 -> label.setForeground(Color.GRAY));
+                        orangeButton.addActionListener(e18 -> label.setForeground(Color.ORANGE));
+                        magentaButton.addActionListener(e17 -> label.setForeground(Color.MAGENTA));
+                        pinkButton.addActionListener(e16 -> label.setForeground(Color.PINK));
                         colorPanel.add(blackButton);
                         colorPanel.add(greenButton);
                         colorPanel.add(redButton);
                         colorPanel.add(blueButton);
+                        colorPanel.add(orangeButton);
+                        colorPanel.add(yellowButton);
+                        colorPanel.add(grayButton);
+                        colorPanel.add(pinkButton);
+                        colorPanel.add(cyanButton);
+                        colorPanel.add(magentaButton);
                         JOptionPane.showMessageDialog(null, colorPanel);
                     });
 
