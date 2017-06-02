@@ -595,13 +595,13 @@ public class Frame extends JFrame {
                 mousePressedAct(me);
             }
 
-//            public void mouseClicked(MouseEvent e) {
-//                int dialogButton = JOptionPane.YES_NO_OPTION;
-//                int result = JOptionPane.showConfirmDialog(null, "Would you like to remove this sticker?", "Remove sticker ", dialogButton);
-//                if (result == JOptionPane.YES_OPTION) {
-//                    myLabel.setVisible(false);
-//                }
-//            }
+            public void mouseClicked(MouseEvent e) {
+                int dialogButton = JOptionPane.YES_NO_OPTION;
+                int result = JOptionPane.showConfirmDialog(null, "Would you like to remove this sticker?", "Remove sticker ", dialogButton);
+                if (result == JOptionPane.YES_OPTION) {
+                    myLabel.setVisible(false);
+                }
+            }
 
             public void mouseReleased(MouseEvent me) {
                 mouseReleasedAct(me);
