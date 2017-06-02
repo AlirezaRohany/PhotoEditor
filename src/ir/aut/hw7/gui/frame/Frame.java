@@ -1,6 +1,6 @@
 package ir.aut.hw7.gui.frame;
 
-import com.jhlabs.image.MaskFilter;
+import com.jhlabs.image.*;
 import ir.aut.hw7.gui.panel.ColorSliderPanel;
 import ir.aut.hw7.gui.panel.ImagePanel;
 import ir.aut.hw7.gui.panel.RotateSliderPanel;
@@ -90,9 +90,97 @@ public class Frame extends JFrame {
     private void loadingPhotoActs() {
         filterButton = new JButton("Filters");
         filterButton.addActionListener(e -> {
-            MaskFilter maskFilter = new MaskFilter();
-            maskFilter.filter(image, image);
-            Frame.this.repaint();
+            JPanel filterPanel = new JPanel();
+            JLabel descLabel = new JLabel("Please choose the effect you want:");
+            filterPanel.add(descLabel);
+            ButtonGroup buttonGroup = new ButtonGroup();
+            JRadioButton noneButton = new JRadioButton("None");
+            JRadioButton maskButton = new JRadioButton("Mask filter");
+            JRadioButton crystallizeButton = new JRadioButton("Crystallize filter");
+            JRadioButton invertButton = new JRadioButton("Invert filter");
+            JRadioButton lookUpButton = new JRadioButton("Lookup filter");
+            JRadioButton solarizeButton = new JRadioButton("Solarize filter");
+            JRadioButton exposureButton = new JRadioButton("Exposure filter");
+            JRadioButton diffusionButton = new JRadioButton("Diffusion filter");
+
+            buttonGroup.add(noneButton);
+            buttonGroup.add(maskButton);
+            buttonGroup.add(crystallizeButton);
+            buttonGroup.add(invertButton);
+            buttonGroup.add(lookUpButton);
+            buttonGroup.add(solarizeButton);
+            buttonGroup.add(exposureButton);
+            buttonGroup.add(diffusionButton);
+
+            noneButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    BufferedImage bf = backupImage.getSubimage(0, 0, image.getWidth(), image.getHeight());
+                    for (int i = 0; i < image.getWidth(); i++)
+                        for (int j = 0; j < image.getHeight(); j++) image.setRGB(i, j, bf.getRGB(i, j));
+                    Frame.this.repaint();
+                }
+            });
+            maskButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    MaskFilter maskFilter = new MaskFilter();
+                    maskFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+            crystallizeButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    CrystallizeFilter crystallizeFilter = new CrystallizeFilter();
+                    crystallizeFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+            invertButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    InvertFilter invertFilter = new InvertFilter();
+                    invertFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+            lookUpButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    LookupFilter lookupFilter = new LookupFilter();
+                    lookupFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+            solarizeButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    SolarizeFilter solarizeFilter = new SolarizeFilter();
+                    solarizeFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+            exposureButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    ExposureFilter exposureFilter = new ExposureFilter();
+                    exposureFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+            diffusionButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    DiffusionFilter diffusionFilter = new DiffusionFilter();
+                    diffusionFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+
+
+            filterPanel.add(noneButton);
+            filterPanel.add(maskButton);
+            filterPanel.add(crystallizeButton);
+            filterPanel.add(invertButton);
+            filterPanel.add(lookUpButton);
+            filterPanel.add(solarizeButton);
+            filterPanel.add(exposureButton);
+            filterPanel.add(diffusionButton);
+
+            JOptionPane.showMessageDialog(null, filterPanel);
         });
         Frame.this.add(filterButton);
         cropButton = new JButton("Crop");
