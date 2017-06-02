@@ -36,34 +36,35 @@ public class Frame extends JFrame {
         this.setSize(width, height);
         this.setDefaultCloseOperation(defaultCloseOperation);
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu1 = new JMenu("File");
-        JMenu menu2 = new JMenu("Edit");
-        menuBar.add(menu1);
-        menuBar.add(menu2);
-        menu1.setMnemonic(KeyEvent.VK_F);
-        menu2.setMnemonic(KeyEvent.VK_E);
-        JMenuItem item1 = new JMenuItem("New", KeyEvent.VK_N);
-        JMenuItem item2 = new JMenuItem("Open", KeyEvent.VK_O);
-        JMenuItem item3 = new JMenuItem("Close", KeyEvent.VK_C);
-        JMenuItem item4 = new JMenuItem("Save", KeyEvent.VK_S);
-        JMenuItem item5 = new JMenuItem("Add Text", KeyEvent.VK_T);
-        JMenuItem item6 = new JMenuItem("Add Sticker", KeyEvent.VK_S);
-        menu1.add(item1);
-        item1.addActionListener(new newActionListener());
-        menu1.add(item2);
-        item2.addActionListener(new openActionListener());
-        menu1.add(item3);
-        item3.addActionListener(new closeActionListener());
-        menu1.add(item4);
-        item4.addActionListener(new saveActionListener());
-        menu2.add(item5);
-        item5.addActionListener(new addTextActionListener());
-        menu2.add(item6);
+        JMenu fileMenu = new JMenu("File");
+        JMenu editMenu = new JMenu("Edit");
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        editMenu.setMnemonic(KeyEvent.VK_E);
+        JMenuItem newItem = new JMenuItem("New", KeyEvent.VK_N);
+        JMenuItem openItem = new JMenuItem("Open", KeyEvent.VK_O);
+        JMenuItem closeItem = new JMenuItem("Close", KeyEvent.VK_C);
+        JMenuItem saveItem = new JMenuItem("Save", KeyEvent.VK_S);
+        JMenuItem addTextItem = new JMenuItem("Add Text", KeyEvent.VK_T);
+        JMenuItem addStickerItem = new JMenuItem("Add Sticker", KeyEvent.VK_S);
+        fileMenu.add(newItem);
+        newItem.addActionListener(new NewActionListener());
+        fileMenu.add(openItem);
+        openItem.addActionListener(new OpenActionListener());
+        fileMenu.add(closeItem);
+        closeItem.addActionListener(new CloseActionListener());
+        fileMenu.add(saveItem);
+        saveItem.addActionListener(new SaveActionListener());
+        editMenu.add(addTextItem);
+        addTextItem.addActionListener(new AddTextActionListener());
+        editMenu.add(addStickerItem);
+        addStickerItem.addActionListener(new AddStickerActionListener());
         this.setJMenuBar(menuBar);
         this.setVisible(true);
     }
 
-    private class newActionListener implements ActionListener {
+    private class NewActionListener implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             if (imagePanel != null) {
                 JOptionPane.showMessageDialog(null, "Please first close the current image!");
@@ -350,7 +351,7 @@ public class Frame extends JFrame {
         Frame.this.add(blueSlider);
     }
 
-    private class openActionListener implements ActionListener {
+    private class OpenActionListener implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             if (imagePanel != null) {
                 JOptionPane.showMessageDialog(null, "Please first close the current image!");
@@ -381,7 +382,7 @@ public class Frame extends JFrame {
         }
     }
 
-    private class closeActionListener implements ActionListener {
+    private class CloseActionListener implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             if (imagePanel != null) imagePanel.setVisible(false);
             if (rotateSliderPanel != null) rotateSliderPanel.setVisible(false);
@@ -407,7 +408,7 @@ public class Frame extends JFrame {
         }
     }
 
-    private class saveActionListener implements ActionListener {
+    private class SaveActionListener implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             JFileChooser jFileChooser = new JFileChooser();
             FileNameExtensionFilter pFilter = new FileNameExtensionFilter("png", "png");
@@ -430,7 +431,7 @@ public class Frame extends JFrame {
         }
     }
 
-    private class addTextActionListener implements ActionListener {
+    private class AddTextActionListener implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             if (imagePanel == null) {
                 JOptionPane.showMessageDialog(null, "Please first add an image!");
@@ -532,27 +533,16 @@ public class Frame extends JFrame {
                 }
 
                 public void mousePressed(MouseEvent me) {
-                    Component component = (Component) me.getSource();
-                    mousePt1 = component.getLocation();
-                    mousePt2 = me.getLocationOnScreen();
-                    Cursor cursor;
-                    cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
-                    setCursor(cursor);
+                    mousePressedAct(me);
                 }
 
                 public void mouseReleased(MouseEvent me) {
-                    setLocationAct(me);
-                    Cursor cursor;
-                    cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-                    setCursor(cursor);
+                    mouseReleasedAct(me);
                 }
             });
             label.addMouseMotionListener(new MouseAdapter() {
                 public void mouseDragged(MouseEvent me) {
-                    setLocationAct(me);
-                    Cursor cursor;
-                    cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
-                    setCursor(cursor);
+                    mouseDraggedAct(me);
                 }
             });
             imagePanel.add(label);
@@ -569,5 +559,133 @@ public class Frame extends JFrame {
         int y = locationOnScreen.y - mousePt2.y + mousePt1.y;
         component.setLocation(x, y);
         Frame.this.repaint();
+    }
+
+    private void mouseDraggedAct(MouseEvent me) {
+        setLocationAct(me);
+        Cursor cursor;
+        cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+        setCursor(cursor);
+    }
+
+    private void mousePressedAct(MouseEvent me) {
+        Component component = (Component) me.getSource();
+        mousePt1 = component.getLocation();
+        mousePt2 = me.getLocationOnScreen();
+        Cursor cursor;
+        cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+        setCursor(cursor);
+    }
+
+    private void mouseReleasedAct(MouseEvent me) {
+        setLocationAct(me);
+        Cursor cursor;
+        cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+        setCursor(cursor);
+    }
+
+    private void addMouseListenersToLabel(JLabel myLabel) {
+        myLabel.addMouseMotionListener(new MouseAdapter() {
+            public void mouseDragged(MouseEvent me) {
+                mouseDraggedAct(me);
+            }
+        });
+        myLabel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                mousePressedAct(me);
+            }
+
+//            public void mouseClicked(MouseEvent e) {
+//                int dialogButton = JOptionPane.YES_NO_OPTION;
+//                int result = JOptionPane.showConfirmDialog(null, "Would you like to remove this sticker?", "Remove sticker ", dialogButton);
+//                if (result == JOptionPane.YES_OPTION) {
+//                    myLabel.setVisible(false);
+//                }
+//            }
+
+            public void mouseReleased(MouseEvent me) {
+                mouseReleasedAct(me);
+            }
+        });
+    }
+
+    private void addMouseListener(JLabel label) {
+        label.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                imagePanel.add(label);
+                label.setLocation(300, 300);
+                addMouseListenersToLabel(label);
+                Frame.this.repaint();
+            }
+        });
+    }
+
+    private class AddStickerActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (imagePanel == null) {
+                JOptionPane.showMessageDialog(null, "Please first add an image");
+                return;
+            }
+            JPanel stickerPanel = new JPanel();
+            JLabel label1 = new JLabel();
+            JLabel label2 = new JLabel();
+            JLabel label3 = new JLabel();
+            JLabel label4 = new JLabel();
+            JLabel label5 = new JLabel();
+            JLabel label6 = new JLabel();
+            JLabel label7 = new JLabel();
+            JLabel label8 = new JLabel();
+            JLabel label9 = new JLabel();
+            JLabel label10 = new JLabel();
+
+
+            ImageIcon imageIcon1 = new ImageIcon("stickers\\Monztars_1.png");
+            ImageIcon imageIcon2 = new ImageIcon("stickers\\Monztars_2.png");
+            ImageIcon imageIcon3 = new ImageIcon("stickers\\Monztars_3.png");
+            ImageIcon imageIcon4 = new ImageIcon("stickers\\Monztars_4.png");
+            ImageIcon imageIcon5 = new ImageIcon("stickers\\Monztars_5.png");
+            ImageIcon imageIcon6 = new ImageIcon("stickers\\Monztars_6.png");
+            ImageIcon imageIcon7 = new ImageIcon("stickers\\Monztars_7.png");
+            ImageIcon imageIcon8 = new ImageIcon("stickers\\Monztars_8.png");
+            ImageIcon imageIcon9 = new ImageIcon("stickers\\Monztars_9.png");
+            ImageIcon imageIcon10 = new ImageIcon("stickers\\Monztars_10.png");
+
+
+            label1.setIcon(imageIcon1);
+            label2.setIcon(imageIcon2);
+            label3.setIcon(imageIcon3);
+            label4.setIcon(imageIcon4);
+            label5.setIcon(imageIcon5);
+            label6.setIcon(imageIcon6);
+            label7.setIcon(imageIcon7);
+            label8.setIcon(imageIcon8);
+            label9.setIcon(imageIcon9);
+            label10.setIcon(imageIcon10);
+
+            addMouseListener(label1);
+            addMouseListener(label2);
+            addMouseListener(label3);
+            addMouseListener(label4);
+            addMouseListener(label5);
+            addMouseListener(label6);
+            addMouseListener(label7);
+            addMouseListener(label8);
+            addMouseListener(label9);
+            addMouseListener(label10);
+
+
+            stickerPanel.add(label1);
+            stickerPanel.add(label2);
+            stickerPanel.add(label3);
+            stickerPanel.add(label4);
+            stickerPanel.add(label5);
+            stickerPanel.add(label6);
+            stickerPanel.add(label7);
+            stickerPanel.add(label8);
+            stickerPanel.add(label9);
+            stickerPanel.add(label10);
+
+            JOptionPane.showMessageDialog(null, stickerPanel);
+        }
     }
 }
