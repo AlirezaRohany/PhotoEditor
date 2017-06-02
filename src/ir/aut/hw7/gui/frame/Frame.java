@@ -1,6 +1,7 @@
 package ir.aut.hw7.gui.frame;
 
 import com.jhlabs.image.*;
+import com.jhlabs.image.GrayFilter;
 import ir.aut.hw7.gui.panel.ColorSliderPanel;
 import ir.aut.hw7.gui.panel.ImagePanel;
 import ir.aut.hw7.gui.panel.RotateSliderPanel;
@@ -102,7 +103,11 @@ public class Frame extends JFrame {
             JRadioButton solarizeButton = new JRadioButton("Solarize filter");
             JRadioButton exposureButton = new JRadioButton("Exposure filter");
             JRadioButton diffusionButton = new JRadioButton("Diffusion filter");
-
+            JRadioButton weaveButton = new JRadioButton("Weave filter");
+            JRadioButton chromeButton = new JRadioButton("Chrome filter");
+            JRadioButton thresholdButton = new JRadioButton("Threshold filter");
+            JRadioButton displaceButton = new JRadioButton("Displace filter");
+            JRadioButton grayButton = new JRadioButton("Gray filter");
             buttonGroup.add(noneButton);
             buttonGroup.add(maskButton);
             buttonGroup.add(crystallizeButton);
@@ -111,7 +116,11 @@ public class Frame extends JFrame {
             buttonGroup.add(solarizeButton);
             buttonGroup.add(exposureButton);
             buttonGroup.add(diffusionButton);
-
+            buttonGroup.add(weaveButton);
+            buttonGroup.add(chromeButton);
+            buttonGroup.add(thresholdButton);
+            buttonGroup.add(displaceButton);
+            buttonGroup.add(grayButton);
             noneButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     BufferedImage bf = backupImage.getSubimage(0, 0, image.getWidth(), image.getHeight());
@@ -169,8 +178,41 @@ public class Frame extends JFrame {
                     Frame.this.repaint();
                 }
             });
-
-
+            weaveButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    WeaveFilter weaveFilter = new WeaveFilter();
+                    weaveFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+            chromeButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    ChromeFilter chromeFilter = new ChromeFilter();
+                    chromeFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+            thresholdButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    ThresholdFilter thresholdFilter = new ThresholdFilter();
+                    thresholdFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+            displaceButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    DisplaceFilter displaceFilter = new DisplaceFilter();
+                    displaceFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
+            grayButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    GrayFilter grayFilter = new GrayFilter();
+                    grayFilter.filter(backupImage, image);
+                    Frame.this.repaint();
+                }
+            });
             filterPanel.add(noneButton);
             filterPanel.add(maskButton);
             filterPanel.add(crystallizeButton);
@@ -178,8 +220,12 @@ public class Frame extends JFrame {
             filterPanel.add(lookUpButton);
             filterPanel.add(solarizeButton);
             filterPanel.add(exposureButton);
+            filterPanel.add(thresholdButton);
             filterPanel.add(diffusionButton);
-
+            filterPanel.add(weaveButton);
+            filterPanel.add(chromeButton);
+            filterPanel.add(displaceButton);
+            filterPanel.add(grayButton);
             JOptionPane.showMessageDialog(null, filterPanel);
         });
         Frame.this.add(filterButton);
